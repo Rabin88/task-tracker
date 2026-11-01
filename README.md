@@ -66,3 +66,11 @@ Both parts deploy from this repo and redeploy on every push to `main`. The datab
 | Other           | Health check path `/api/health`                                                       | Rewrite `/*` to `/index.html` so page refreshes work |
 
 `--include=dev` is needed because TypeScript is a dev dependency. `VITE_API_URL` is read at build time, so changing it needs a redeploy of the static site.
+
+## What I would do next
+
+- **Pagination:** the task list endpoint returns every task at once. I would add cursor-based pagination so it stays fast for users with many tasks.
+- **Rate limiting and security headers:** login and register have no brute-force protection. I would add `express-rate-limit` on the auth routes and `helmet` for standard security headers.
+- **Optimistic updates:** the UI fetches the whole list again after every change. This keeps it correct but adds a round trip each time. I would use React Query to update the UI right away and roll back if the request fails.
+- **End-to-end tests:** unit and integration tests cover the API and components. I would add Playwright tests for the main flows (sign up, create, edit, complete, filter) and run them in CI.
+- **Cold starts:** the free Render instance sleeps after 15 minutes. A paid instance would fix the slow first request.
