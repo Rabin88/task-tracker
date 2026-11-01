@@ -15,6 +15,12 @@ Hosted on Render's free tier: the API sleeps after 15 minutes without traffic, s
 | Backend  | Node.js + Express + TypeScript              | `server/`            |
 | Database | PostgreSQL (Neon) with plain SQL migrations | `server/migrations/` |
 
+## Architecture
+
+![System architecture: the React app in the browser loads from a Render static site, calls the Express API on Render with a JWT, and the API reads and writes PostgreSQL on Neon](docs/architecture.png)
+
+The browser loads the built React app from a static site, then talks to the API with JSON over HTTPS, sending the login token on each request. The API checks the token, validates input and runs parameterised SQL against PostgreSQL, which is the only place data is stored. After every change the UI fetches the list again, so it always matches the database. The diagram's source is [`docs/architecture.svg`](docs/architecture.svg).
+
 ## Run locally
 
 You need Node.js 20+ and a PostgreSQL database. Use two terminals:

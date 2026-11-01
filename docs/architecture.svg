@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; fill: #1f2933; }
+    .title { font-size: 34px; font-weight: 700; }
+    .subtitle { font-size: 18px; fill: #616e7c; }
+    .group { font-size: 22px; font-weight: 700; }
+    .groupsub { font-size: 15px; fill: #616e7c; }
+    .boxtitle { font-size: 17px; font-weight: 650; }
+    .boxtext { font-size: 14px; fill: #52606d; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px; fill: #52606d; }
+    .label { font-size: 15px; font-weight: 650; fill: #334155; }
+    .small { font-size: 13px; fill: #52606d; }
+    .note { font-size: 16px; fill: #334155; }
+    .line { stroke: #334155; stroke-width: 2; fill: none; }
+  </style>
+
+  <rect width="1600" height="1000" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="50" y="70" class="title">Task Tracker: System Architecture</text>
+  <text x="50" y="104" class="subtitle">React frontend, Node/Express API and PostgreSQL, deployed on Render and Neon</text>
+
+  <!-- ============ Browser ============ -->
+  <rect x="50" y="150" width="400" height="690" rx="16" fill="#ffffff" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="50" y="150" width="400" height="8" rx="4" fill="#2563eb"/>
+  <text x="78" y="196" class="group" style="fill:#2563eb">User's browser</text>
+  <text x="78" y="222" class="groupsub">React 19 + TypeScript (Vite) · MUI</text>
+
+  <g>
+    <rect x="78" y="248" width="344" height="72" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="96" y="276" class="boxtitle">Pages &amp; components</text>
+    <text x="96" y="300" class="boxtext">Login · Register · Tasks (form, list, search)</text>
+
+    <rect x="78" y="334" width="344" height="72" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="96" y="362" class="boxtitle">AuthProvider</text>
+    <text x="96" y="386" class="boxtext">Current user · login · logout</text>
+
+    <rect x="78" y="420" width="344" height="72" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="96" y="448" class="boxtitle">useForm + Zod schemas</text>
+    <text x="96" y="472" class="boxtext">Validates input before anything is sent</text>
+
+    <rect x="78" y="506" width="344" height="72" rx="10" fill="#dbeafe" stroke="#93c5fd"/>
+    <text x="96" y="534" class="boxtitle">api/client.ts  (fetch wrapper)</text>
+    <text x="96" y="558" class="boxtext">Adds JWT · parses JSON · 401 → log out</text>
+
+    <rect x="78" y="592" width="344" height="72" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="96" y="620" class="boxtitle">localStorage</text>
+    <text x="96" y="644" class="boxtext">JWT login token (expires after 1 day)</text>
+  </g>
+  <text x="78" y="702" class="small">Feature folders: features/auth · features/tasks</text>
+  <text x="78" y="724" class="small">Shared: api/ · components/ · hooks/ · lib/</text>
+  <text x="78" y="746" class="small">Imports point one way: features → api → lib</text>
+
+  <!-- ============ Render ============ -->
+  <rect x="600" y="150" width="464" height="690" rx="16" fill="#faf5ff" stroke="#7c3aed" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="628" y="196" class="group" style="fill:#7c3aed">Render</text>
+  <text x="628" y="222" class="groupsub">Free tier · redeploys on every push to main</text>
+
+  <!-- Static site -->
+  <rect x="628" y="248" width="424" height="140" rx="12" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="652" y="280" class="boxtitle">Static Site</text>
+  <text x="652" y="304" class="mono">task-tracker-dahs.onrender.com</text>
+  <text x="652" y="334" class="boxtext">Built files from client/ (npm run build)</text>
+  <text x="652" y="358" class="boxtext">Served from a CDN · /* rewritten to /index.html</text>
+
+  <!-- Web service -->
+  <rect x="628" y="410" width="424" height="404" rx="12" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="652" y="442" class="boxtitle">Web Service · Node.js + Express 5</text>
+  <text x="652" y="466" class="mono">task-tracker-api-vqki.onrender.com</text>
+
+  <rect x="652" y="486" width="376" height="48" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+  <text x="668" y="516" class="boxtext">CORS · request logging (pino) · JSON parser</text>
+  <rect x="652" y="544" width="376" height="48" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+  <text x="668" y="574" class="boxtext">Routes → requireAuth (verifies the JWT)</text>
+  <rect x="652" y="602" width="376" height="48" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+  <text x="668" y="632" class="boxtext">Controllers → Zod validation</text>
+  <rect x="652" y="660" width="376" height="48" rx="8" fill="#ede9fe" stroke="#c4b5fd"/>
+  <text x="668" y="690" class="boxtext">Services → parameterised SQL (pg pool)</text>
+  <rect x="652" y="718" width="376" height="48" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+  <text x="668" y="748" class="boxtext">Error handler → { error: { message, details } }</text>
+  <text x="652" y="794" class="small">Health check: GET /api/health</text>
+
+  <!-- ============ Neon ============ -->
+  <rect x="1196" y="150" width="354" height="690" rx="16" fill="#f0fdf4" stroke="#059669" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="1222" y="196" class="group" style="fill:#059669">Neon</text>
+  <text x="1222" y="222" class="groupsub">Serverless PostgreSQL</text>
+  <text x="1222" y="272" class="note">Single source of truth:</text>
+  <text x="1222" y="296" class="note">all users and tasks live only here</text>
+
+  <!-- cylinder -->
+  <path d="M1210,400 L1210,740 A155,30 0 0 0 1520,740 L1520,400" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+  <ellipse cx="1365" cy="400" rx="155" ry="30" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="1365" y="460" class="boxtitle" text-anchor="middle">PostgreSQL</text>
+
+  <rect x="1235" y="482" width="260" height="96" rx="8" fill="#ecfdf5" stroke="#a7f3d0"/>
+  <text x="1251" y="508" class="boxtitle">users</text>
+  <text x="1251" y="532" class="boxtext">id · email (unique, any case)</text>
+  <text x="1251" y="554" class="boxtext">password (bcrypt hash only)</text>
+
+  <rect x="1235" y="592" width="260" height="120" rx="8" fill="#ecfdf5" stroke="#a7f3d0"/>
+  <text x="1251" y="618" class="boxtitle">tasks</text>
+  <text x="1251" y="642" class="boxtext">id · user_id → users</text>
+  <text x="1251" y="664" class="boxtext">title · description · status</text>
+  <text x="1251" y="686" class="boxtext">created_at · updated_at</text>
+
+  <text x="1222" y="800" class="small">CHECK constraints guard the data:</text>
+  <text x="1222" y="820" class="small">title ≤ 200 · description ≤ 500 · valid status</text>
+
+  <!-- ============ Arrows ============ -->
+  <!-- 1: browser loads the app -->
+  <line x1="422" y1="300" x2="626" y2="300" class="line" marker-end="url(#arrow)"/>
+  <text x="530" y="288" class="label" text-anchor="middle">① Load app</text>
+  <text x="530" y="322" class="small" text-anchor="middle">HTML · JS · CSS</text>
+
+  <!-- 2: API calls -->
+  <line x1="422" y1="530" x2="650" y2="530" class="line" marker-end="url(#arrow)"/>
+  <line x1="650" y1="556" x2="424" y2="556" class="line" marker-end="url(#arrow)"/>
+  <text x="530" y="518" class="label" text-anchor="middle">② REST · JSON</text>
+  <text x="530" y="580" class="small" text-anchor="middle">HTTPS · Bearer JWT</text>
+
+  <!-- 3: SQL -->
+  <line x1="1028" y1="672" x2="1233" y2="672" class="line" marker-end="url(#arrow)"/>
+  <line x1="1233" y1="698" x2="1030" y2="698" class="line" marker-end="url(#arrow)"/>
+  <text x="1130" y="660" class="label" text-anchor="middle">③ SQL</text>
+  <text x="1130" y="722" class="small" text-anchor="middle">TLS · rows back</text>
+
+  <!-- ============ Key points ============ -->
+  <rect x="50" y="870" width="1500" height="100" rx="14" fill="#ffffff" stroke="#d9e2ec"/>
+  <text x="78" y="908" class="note"><tspan font-weight="700">Validation in 3 layers:</tspan> Zod in the browser → Zod in the API → CHECK constraints in the database</text>
+  <text x="78" y="942" class="note"><tspan font-weight="700">Data isolation:</tspan> every query filters by the user id from the JWT  ·  <tspan font-weight="700">Sync:</tspan> the UI refetches the list after every change</text>
+</svg>
