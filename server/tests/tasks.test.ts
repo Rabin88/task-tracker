@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { createApp } from '../src/app';
 import { env } from '../src/config/env';
 import { updateTaskBodySchema } from '../src/schemas/tasks.schema';
+import { orderByClause, toSearchPattern } from '../src/services/tasks.service';
 
 // These tests cover validation only: every request is rejected before reaching the database.
 const app = createApp();
@@ -20,6 +21,17 @@ describe('POST /api/tasks validation', () => {
     const res = await request(app).post('/api/tasks').set(auth).send({ title: '   ' });
     expect(res.status).toBe(400);
     expect(res.body.error.details).toEqual([{ field: 'title', message: 'Title is required' }]);
+  });
+
+  it('limits the description to 500 characters', async () => {
+    const res = await request(app)
+      .post('/api/tasks')
+      .set(auth)
+      .send({ title: 'Write tests', description: 'a'.repeat(501) });
+    expect(res.status).toBe(400);
+    expect(res.body.error.details).toEqual([
+      { field: 'description', message: 'Description must be at most 500 characters' },
+    ]);
   });
 
   it('rejects an unknown status', async () => {
@@ -80,5 +92,39 @@ describe('GET /api/tasks filters and sorting validation', () => {
     const res = await request(app).get('/api/tasks?order=up').set(auth);
     expect(res.status).toBe(400);
     expect(res.body.error.details[0].field).toBe('order');
+  });
+});
+
+describe('task sorting', () => {
+  it('sorts status in workflow order, not alphabetically', () => {
+    expect(orderByClause('status', 'asc')).toBe(
+      "CASE status WHEN 'todo' THEN 1 WHEN 'in_progress' THEN 2 ELSE 3 END ASC, created_at DESC",
+    );
+  });
+
+  it('sorts titles ignoring case', () => {
+    expect(orderByClause('title', 'asc')).toBe('LOWER(title) ASC, created_at DESC');
+  });
+
+  it('sorts by date created without a tie-breaker', () => {
+    expect(orderByClause('created_at', 'desc')).toBe('created_at DESC');
+  });
+});
+
+describe('task search', () => {
+  it('matches the text anywhere in the title', () => {
+    expect(toSearchPattern('milk')).toBe('%milk%');
+  });
+
+  it('treats % and _ as normal characters, not wildcards', () => {
+    expect(toSearchPattern('50%_off')).toBe('%50\\%\\_off%');
+  });
+
+  it('rejects search text longer than 200 characters', async () => {
+    const res = await request(app)
+      .get(`/api/tasks?search=${'a'.repeat(201)}`)
+      .set(auth);
+    expect(res.status).toBe(400);
+    expect(res.body.error.details).toEqual([{ field: 'search', message: 'Search must be at most 200 characters' }]);
   });
 });

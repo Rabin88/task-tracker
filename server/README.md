@@ -18,15 +18,18 @@ Check it works: open http://localhost:4000/api/health. You should see `{"status"
 
 ## Scripts
 
-| Script | What it does |
-|---|---|
-| `npm run dev` | Start with auto-reload (tsx watch) |
-| `npm run build` | Compile TypeScript to `dist/` |
-| `npm start` | Run the compiled server (used on Render) |
-| `npm run migrate` | Apply new SQL migrations to the database in `DATABASE_URL` |
-| `npm run migrate:prod` | Same, using the compiled JS (used on Render) |
-| `npm test` | Run tests (Vitest + Supertest) |
-| `npm run typecheck` | Type-check without building |
+| Script                  | What it does                                                |
+| ----------------------- | ----------------------------------------------------------- |
+| `npm run dev`           | Start with auto-reload (tsx watch)                          |
+| `npm run build`         | Compile TypeScript to `dist/`                               |
+| `npm start`             | Run the compiled server (used on Render)                    |
+| `npm run migrate`       | Apply new SQL migrations to the database in `DATABASE_URL`  |
+| `npm run migrate:prod`  | Same, using the compiled JS (used on Render)                |
+| `npm test`              | Run tests (Vitest + Supertest)                              |
+| `npm run typecheck`     | Type-check without building                                 |
+| `npm run test:coverage` | Run tests with a coverage report (`coverage/index.html`)    |
+| `npm run lint`          | Check code with ESLint                                      |
+| `npm run format`        | Format all files with Prettier (`format:check` only checks) |
 
 ## Structure
 
@@ -52,17 +55,17 @@ Request flow: `routes -> controller (validates with Zod) -> service (logic + SQL
 
 ## API
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| GET | `/api/health` | – | API + database status |
-| POST | `/api/auth/register` | – | `{ email, password }` → `201 { data: { user, token } }` |
-| POST | `/api/auth/login` | – | `{ email, password }` → `{ data: { user, token } }` |
-| GET | `/api/auth/me` | ✅ | The logged-in user |
-| GET | `/api/tasks` | ✅ | The logged-in user's tasks. Optional: `?status=todo\|in_progress\|done`, `?sort=created_at\|updated_at\|title\|status`, `?order=asc\|desc` (default: newest first) |
-| POST | `/api/tasks` | ✅ | `{ title, description?, status? }` → `201 { data: task }` (status defaults to `todo`) |
-| GET | `/api/tasks/:id` | ✅ | One task |
-| PATCH | `/api/tasks/:id` | ✅ | Send only the fields to change; `description: null` clears it |
-| DELETE | `/api/tasks/:id` | ✅ | `204 No Content` |
+| Method | Path                 | Auth | Description                                                                                                                                                                                                                                                                        |
+| ------ | -------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/health`        | –    | API + database status                                                                                                                                                                                                                                                              |
+| POST   | `/api/auth/register` | –    | `{ email, password }` → `201 { data: { user, token } }`                                                                                                                                                                                                                            |
+| POST   | `/api/auth/login`    | –    | `{ email, password }` → `{ data: { user, token } }`                                                                                                                                                                                                                                |
+| GET    | `/api/auth/me`       | ✅   | The logged-in user                                                                                                                                                                                                                                                                 |
+| GET    | `/api/tasks`         | ✅   | The logged-in user's tasks. Optional: `?status=todo\|in_progress\|done`, `?sort=created_at\|updated_at\|title\|status`, `?order=asc\|desc` (default: newest first), `?search=text` (title contains it, ignoring case). Status sorts as todo, in_progress, done; title ignores case |
+| POST   | `/api/tasks`         | ✅   | `{ title, description?, status? }` → `201 { data: task }` (status defaults to `todo`)                                                                                                                                                                                              |
+| GET    | `/api/tasks/:id`     | ✅   | One task                                                                                                                                                                                                                                                                           |
+| PATCH  | `/api/tasks/:id`     | ✅   | Send only the fields to change; `description: null` clears it                                                                                                                                                                                                                      |
+| DELETE | `/api/tasks/:id`     | ✅   | `204 No Content`                                                                                                                                                                                                                                                                   |
 
 Protected routes need the token from register/login in a header: `Authorization: Bearer <token>`. Tokens expire after 1 day. Emails are trimmed and lowercased; passwords are stored as bcrypt hashes in `users.password`.
 
@@ -84,10 +87,10 @@ Every error response has the same shape:
 { "error": { "message": "Validation failed", "details": [{ "field": "title", "message": "Title is required" }] } }
 ```
 
-| Status | When |
-|---|---|
-| 400 | Invalid input (with `details` per field), malformed JSON |
-| 401 | Missing/invalid/expired token, wrong email or password |
-| 404 | Task not found (or belongs to another user), unknown route |
-| 409 | Email already registered |
-| 500 | Unexpected error: the client only sees `"Internal server error"`; details go to the logs |
+| Status | When                                                                                     |
+| ------ | ---------------------------------------------------------------------------------------- |
+| 400    | Invalid input (with `details` per field), malformed JSON                                 |
+| 401    | Missing/invalid/expired token, wrong email or password                                   |
+| 404    | Task not found (or belongs to another user), unknown route                               |
+| 409    | Email already registered                                                                 |
+| 500    | Unexpected error: the client only sees `"Internal server error"`; details go to the logs |

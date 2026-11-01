@@ -3,7 +3,7 @@ CREATE TABLE tasks (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
   title       TEXT NOT NULL CHECK (char_length(title) BETWEEN 1 AND 200),
-  description TEXT CHECK (description IS NULL OR char_length(description) <= 2000),
+  description TEXT CHECK (description IS NULL OR char_length(description) <= 500),
   status      TEXT NOT NULL DEFAULT 'todo'
               CHECK (status IN ('todo', 'in_progress', 'done')),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),

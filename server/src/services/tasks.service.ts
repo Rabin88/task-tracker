@@ -16,18 +16,42 @@ export type Task = {
   updated_at: Date;
 };
 
-// One user's tasks, optionally filtered by status and sorted (newest first by default).
-export async function getTasksByUserId(userId: string, options: Partial<GetTasksQuery> = {}) {
-  const { status = null, sort = 'created_at', order = 'desc' } = options;
+// What each ?sort option orders by. Status follows the workflow (To do, In progress,
+// Done) instead of alphabetical order, and titles ignore upper/lower case.
+// Only these fixed strings ever reach the SQL, never the raw query value.
+const SORT_COLUMNS: Record<GetTasksQuery['sort'], string> = {
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  title: 'LOWER(title)',
+  status: "CASE status WHEN 'todo' THEN 1 WHEN 'in_progress' THEN 2 ELSE 3 END",
+};
 
-  // Column names can't be $1 placeholders. sort and order are safe to insert
-  // because the schema only allows the listed values.
-  // "$2 IS NULL OR ..." means: no status given = no status filter.
+export function orderByClause(sort: GetTasksQuery['sort'], order: GetTasksQuery['order']) {
+  const direction = order === 'asc' ? 'ASC' : 'DESC';
+  // Newest first breaks ties, e.g. between tasks with the same status.
+  return sort === 'created_at' ? `created_at ${direction}` : `${SORT_COLUMNS[sort]} ${direction}, created_at DESC`;
+}
+
+// Turns search text into an ILIKE pattern that matches it anywhere in the title.
+// % and _ are wildcards in LIKE, so they're escaped to match literally ("50%" finds "50%").
+export function toSearchPattern(search: string) {
+  return `%${search.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+}
+
+// One user's tasks, optionally filtered by status and title search, and sorted
+// (newest first by default).
+export async function getTasksByUserId(userId: string, options: Partial<GetTasksQuery> = {}) {
+  const { status = null, sort = 'created_at', order = 'desc', search } = options;
+
+  // "$2 IS NULL OR ..." means: no status given = no status filter. Same for $3 and search.
+  // ILIKE ignores upper/lower case. The search text is a parameter, never part of the SQL.
   const { rows } = await query<Task>(
     `SELECT * FROM tasks
-     WHERE user_id = $1 AND ($2::text IS NULL OR status = $2)
-     ORDER BY ${sort} ${order}, created_at DESC`,
-    [userId, status],
+     WHERE user_id = $1
+       AND ($2::text IS NULL OR status = $2)
+       AND ($3::text IS NULL OR title ILIKE $3)
+     ORDER BY ${orderByClause(sort, order)}`,
+    [userId, status, search ? toSearchPattern(search) : null],
   );
   return rows;
 }

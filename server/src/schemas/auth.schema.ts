@@ -5,7 +5,11 @@ import { z } from 'zod';
 const bodyError = { error: 'Request body must be a JSON object' };
 
 // Emails are trimmed and lowercased so "Bob@X.com " and "bob@x.com" are the same account.
-const email = z.string({ error: 'Email is required' }).trim().toLowerCase().pipe(z.email('Invalid email address').max(254));
+const email = z
+  .string({ error: 'Email is required' })
+  .trim()
+  .toLowerCase()
+  .pipe(z.email('Invalid email address').max(254));
 
 export const registerBodySchema = z.object(
   {

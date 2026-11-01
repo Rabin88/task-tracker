@@ -4,6 +4,8 @@ import { verifyToken, type AuthUser } from '../services/auth.service';
 
 // Lets TypeScript know about res.locals.user.
 declare global {
+  // Express's own types are a namespace, so augmenting them needs one too.
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Locals {
       user?: AuthUser;

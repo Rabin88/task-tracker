@@ -4,6 +4,10 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/**/*.test.ts'],
+    coverage: {
+      include: ['src/**'],
+      reporter: ['text', 'html'], // summary in the terminal, details in coverage/index.html
+    },
     // Tests get their own env so they never touch the dev or live database by accident.
     env: {
       NODE_ENV: 'test',

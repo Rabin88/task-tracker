@@ -11,7 +11,7 @@ import {
 // Controllers: validate the input, call the service, send the response.
 // No SQL, no business rules. Invalid input throws a ZodError -> errorHandler -> 400.
 
-// GET /api/tasks?status=&sort=&order= - the logged-in user's tasks
+// GET /api/tasks?status=&sort=&order=&search= - the logged-in user's tasks
 export const getMyTasks: RequestHandler = async (req, res) => {
   const options = getTasksQuerySchema.parse(req.query);
   const tasks = await tasksService.getTasksByUserId(getAuthUser(res).id, options);

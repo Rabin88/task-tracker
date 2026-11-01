@@ -57,7 +57,9 @@ describe('requireAuth', () => {
   protectedApp.use(errorHandler);
 
   it('accepts a valid token and exposes the user id', async () => {
-    const res = await request(protectedApp).get('/private').set('Authorization', `Bearer ${sign({ expiresIn: '1h' })}`);
+    const res = await request(protectedApp)
+      .get('/private')
+      .set('Authorization', `Bearer ${sign({ expiresIn: '1h' })}`);
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ userId: USER_ID });
     expect(res.headers['cache-control']).toBe('no-store');
@@ -71,13 +73,17 @@ describe('requireAuth', () => {
   });
 
   it('rejects an expired token', async () => {
-    const res = await request(protectedApp).get('/private').set('Authorization', `Bearer ${sign({ expiresIn: -10 })}`);
+    const res = await request(protectedApp)
+      .get('/private')
+      .set('Authorization', `Bearer ${sign({ expiresIn: -10 })}`);
     expect(res.status).toBe(401);
     expect(res.body.error.message).toBe('Invalid or expired token');
   });
 
   it('rejects a header without the Bearer prefix', async () => {
-    const res = await request(protectedApp).get('/private').set('Authorization', sign({ expiresIn: '1h' }));
+    const res = await request(protectedApp)
+      .get('/private')
+      .set('Authorization', sign({ expiresIn: '1h' }));
     expect(res.status).toBe(401);
     expect(res.body.error.message).toBe('Authentication required');
   });

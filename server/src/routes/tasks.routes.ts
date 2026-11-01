@@ -5,7 +5,7 @@ import * as tasksController from '../controllers/tasks.controller';
 // needs a logged-in user and paths are relative to /api/tasks.
 export const tasksRouter = Router();
 
-tasksRouter.get('/', tasksController.getMyTasks); // GET /api/tasks?status=&sort=&order=
+tasksRouter.get('/', tasksController.getMyTasks); // GET /api/tasks?status=&sort=&order=&search=
 tasksRouter.post('/', tasksController.createTask); // POST /api/tasks
 tasksRouter.get('/:id', tasksController.getTask); // GET /api/tasks/:id
 tasksRouter.patch('/:id', tasksController.updateTask); // PATCH /api/tasks/:id

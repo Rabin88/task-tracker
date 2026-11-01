@@ -16,10 +16,7 @@ describe('app', () => {
   });
 
   it('returns 400 for a malformed JSON body', async () => {
-    const res = await request(app)
-      .post('/api/health')
-      .set('Content-Type', 'application/json')
-      .send('{"bad json');
+    const res = await request(app).post('/api/health').set('Content-Type', 'application/json').send('{"bad json');
 
     expect(res.status).toBe(400);
     expect(res.body.error.message).toBe('Invalid JSON body');
