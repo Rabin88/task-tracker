@@ -6,7 +6,7 @@ import { App } from '../src/app/App';
 import { AuthProvider } from '../src/features/auth/AuthProvider';
 
 // Renders the whole app at a URL, with the real router and auth.
-export function renderApp(url = '/') {
+export function renderApp(url = '/tasks') {
   return render(
     <MemoryRouter initialEntries={[url]}>
       <AuthProvider>

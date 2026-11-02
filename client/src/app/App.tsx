@@ -14,10 +14,11 @@ export function App() {
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<TasksPage />} />
+          <Route path="/tasks" element={<TasksPage />} />
         </Route>
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/" element={<Navigate to="/tasks" replace />} />
+      <Route path="*" element={<Navigate to="/tasks" replace />} />
     </Routes>
   );
 }

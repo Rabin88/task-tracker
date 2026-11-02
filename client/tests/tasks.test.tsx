@@ -25,7 +25,7 @@ describe('tasks page', () => {
       'GET /auth/me': me,
       'GET /tasks': { body: { data: [makeTask({ title: 'First' }), makeTask({ title: 'Second' })], count: 2 } },
     });
-    renderApp('/');
+    renderApp('/tasks');
 
     expect(await screen.findByText('First')).toBeInTheDocument();
     expect(screen.getByText('Second')).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe('tasks page', () => {
 
   it('validates the add form before calling the API', async () => {
     const fetch = mockFetch({ 'GET /auth/me': me, 'GET /tasks': { body: { data: [], count: 0 } } });
-    renderApp('/');
+    renderApp('/tasks');
     await screen.findByText('No tasks yet. Add your first one on the left.');
     const callsBefore = fetch.mock.calls.length;
 
@@ -60,7 +60,7 @@ describe('tasks page', () => {
         return { status: 201, body: { data: created } };
       },
     });
-    renderApp('/');
+    renderApp('/tasks');
     await screen.findByText('No tasks yet. Add your first one on the left.');
 
     await userEvent.type(screen.getByLabelText('Title'), '  Buy milk  ');
@@ -79,7 +79,7 @@ describe('tasks page', () => {
       'GET /tasks': { body: { data: [task], count: 1 } },
       [`PATCH /tasks/${task.id}`]: { body: { data: { ...task, status: 'done' } } },
     });
-    renderApp('/');
+    renderApp('/tasks');
 
     await userEvent.click(await screen.findByRole('checkbox', { name: 'Mark "Finish report" as done' }));
 
@@ -97,7 +97,7 @@ describe('tasks page', () => {
         return { body: { data: task } };
       },
     });
-    renderApp('/');
+    renderApp('/tasks');
 
     await userEvent.click(await screen.findByRole('checkbox', { name: 'Mark "Half done" as done' }));
 
@@ -117,7 +117,7 @@ describe('tasks page', () => {
       'GET /tasks': { body: { data: [task], count: 1 } },
       [`PATCH /tasks/${task.id}`]: { body: { data: task } },
     });
-    renderApp('/');
+    renderApp('/tasks');
     const item = (await screen.findByRole('heading', { name: 'Old title' })).closest('li')!;
     await userEvent.click(within(item).getByRole('button', { name: 'Edit' }));
 
@@ -150,7 +150,7 @@ describe('tasks page', () => {
         return { status: 204 };
       },
     });
-    renderApp('/');
+    renderApp('/tasks');
 
     await userEvent.click(await screen.findByRole('button', { name: 'Delete' }));
     const dialog = screen.getByRole('dialog', { name: 'Delete task?' });
@@ -162,7 +162,7 @@ describe('tasks page', () => {
 
   it('sends the filter and sort options to the API', async () => {
     const fetch = mockFetch({ 'GET /auth/me': me, 'GET /tasks': { body: { data: [], count: 0 } } });
-    renderApp('/');
+    renderApp('/tasks');
     await screen.findByText('No tasks yet. Add your first one on the left.');
 
     await chooseOption('Show', 'Done');
@@ -183,7 +183,7 @@ describe('tasks page', () => {
         return new Response(JSON.stringify({ data: [makeTask({ title: 'Back online' })], count: 1 }), { status: 200 });
       }),
     );
-    renderApp('/');
+    renderApp('/tasks');
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Cannot reach the server');
 
@@ -205,7 +205,7 @@ describe('tasks page', () => {
       return new Response(JSON.stringify({ data, count: data.length }), { status: 200 });
     });
     vi.stubGlobal('fetch', fetch);
-    renderApp('/');
+    renderApp('/tasks');
     await screen.findByText('Walk the dog');
 
     await userEvent.type(screen.getByLabelText('Search'), 'MILK');
@@ -224,7 +224,7 @@ describe('tasks page', () => {
   it('cancels an edit without saving', async () => {
     const task = makeTask({ title: 'Keep me' });
     const fetch = mockFetch({ 'GET /auth/me': me, 'GET /tasks': { body: { data: [task], count: 1 } } });
-    renderApp('/');
+    renderApp('/tasks');
     const item = (await screen.findByRole('heading', { name: 'Keep me' })).closest('li')!;
 
     await userEvent.click(within(item).getByRole('button', { name: 'Edit' }));
@@ -240,7 +240,7 @@ describe('tasks page', () => {
       'GET /auth/me': me,
       'GET /tasks': { status: 401, body: { error: { message: 'Invalid or expired token' } } },
     });
-    renderApp('/');
+    renderApp('/tasks');
 
     expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument();
     expect(localStorage.getItem('task-tracker-token')).toBeNull();
@@ -249,7 +249,7 @@ describe('tasks page', () => {
 
   it('logs out and confirms it on the login page', async () => {
     mockFetch({ 'GET /auth/me': me, 'GET /tasks': { body: { data: [], count: 0 } } });
-    renderApp('/');
+    renderApp('/tasks');
     await screen.findByText('No tasks yet. Add your first one on the left.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Log out' }));

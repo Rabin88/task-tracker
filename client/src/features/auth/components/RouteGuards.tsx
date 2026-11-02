@@ -48,5 +48,5 @@ export function ProtectedRoute() {
 export function GuestRoute() {
   const { user, loading, sessionError } = useAuth();
   if (loading || sessionError) return <SessionStatus />;
-  return user ? <Navigate to="/" replace /> : <Outlet />;
+  return user ? <Navigate to="/tasks" replace /> : <Outlet />;
 }
