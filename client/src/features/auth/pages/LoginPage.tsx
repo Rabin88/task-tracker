@@ -12,7 +12,7 @@ export function LoginPage() {
   const form = useForm({
     schema: loginSchema,
     initialValues: { email: '', password: '' },
-    onSubmit: ({ email, password }) => login(email, password), // GuestRoute then redirects to /
+    onSubmit: ({ email, password }) => login(email, password), // GuestRoute then redirects to /tasks
   });
 
   return (

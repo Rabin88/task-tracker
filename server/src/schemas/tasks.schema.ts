@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Request schemas for task routes. Controllers call schema.parse(...).
-// The same limits exist as CHECK constraints in the database (migrations/002, 003);
+// The same limits exist as CHECK constraints in the database (migrations/002_create_tasks.sql);
 // checking here first turns bad input into a clear 400 instead of a database error.
 
 const bodyError = { error: 'Request body must be a JSON object' };

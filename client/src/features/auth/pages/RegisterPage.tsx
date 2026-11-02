@@ -11,7 +11,7 @@ export function RegisterPage() {
   const form = useForm({
     schema: registerSchema,
     initialValues: { email: '', password: '', confirmPassword: '' },
-    onSubmit: ({ email, password }) => register(email, password), // GuestRoute then redirects to /
+    onSubmit: ({ email, password }) => register(email, password), // GuestRoute then redirects to /tasks
   });
 
   return (
